@@ -1,4 +1,5 @@
 ---
+pretty_name: "BELUGA: Thai Audiobook Text-to-Speech Quality Assessment Benchmark"
 license: cc-by-nc-4.0
 task_categories:
 - audio-classification
@@ -14,10 +15,7 @@ size_categories:
 - 10K<n<100K
 ---
 
-# BELUGA
-
-**B**inary **E**valuation of **L**ong-form a**U**diobook **G**eneration **A**rtefacts — a Thai-language
-challenge dataset for production-grade audiobook TTS quality control.
+# BELUGA: Thai Audiobook Text-to-Speech Quality Assessment Benchmark
 
 Modern TTS is near-human on standard benchmarks, yet production audiobook narration still fails on
 subtle defects: a repeated syllable, a mispronounced tone, a pause in the wrong place. These are too
@@ -63,13 +61,22 @@ Nine labellers, all with professional commercial audiobook narration and QC expe
 shared guideline. Each completed a one-hour training book before touching production data. A lead QA
 reviewer re-checked a random 10% of every labeller's accepted segments.
 
+The guideline itself ships with this dataset, with its own reference audio for every defect type:
+
+| | |
+|---|---|
+| [`guidelines/qa-criteria-th.md`](guidelines/qa-criteria-th.md) | the original Thai document the QA team worked from — authoritative |
+| [`guidelines/qa-criteria-en.md`](guidelines/qa-criteria-en.md) | English translation of that document |
+
+The summary below is a condensed version of those two files.
+
 ### Correctness — pronunciation & text accuracy
 
 **Zero tolerance:** a passing clip reads the script 100% correctly.
 
 1. Repeated words or syllables — *…ตั้งปณิธานแน่วแน่ **แน่***
 2. Skipped syllables or words — *ครั้งแล้ว\_\_ที่ข้าพเจ้า…*
-3. Wrong spelling-to-sound — *เกิด* read as *เกิน*
+3. Wrong spelling-to-sound — *เกิน* read as *เกิด*
 4. Wrong tone (วรรณยุกต์) — *แน่วแน่* read as *แนวแน่*
 5. ไม้ยมก (ๆ) must be read as the doubled word exactly once — *อื่นๆ → อื่นอื่น*
 6. Parenthetical text read once, never duplicated
