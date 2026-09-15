@@ -1,29 +1,13 @@
----
-pretty_name: "BELUGA: Thai Audiobook Text-to-Speech Quality Assessment Benchmark"
-license: cc-by-nc-4.0
-task_categories:
-- audio-classification
-language:
-- th
-tags:
-- text-to-speech
-- tts-evaluation
-- audiobook
-- quality-control
-- thai
-size_categories:
-- 10K<n<100K
----
-
 # BELUGA: Thai Audiobook Text-to-Speech Quality Assessment Benchmark
 
 Modern TTS is near-human on standard benchmarks, yet production audiobook narration still fails on
 subtle defects: a repeated syllable, a mispronounced tone, a pause in the wrong place. These are too
 small to move CER and too local to move a MOS score, but a listener hears every one of them. BELUGA
-labels those defects with **decision-ready binary labels** collected inside a real narration workflow —
+labels those defects with **decision-ready binary labels** collected inside a real narration workflow,
 the same keep-or-regenerate call an editor makes in production.
 
-This page walks through **worked examples**: listen, read the script, and see why each take was rejected.
+This page walks through **worked examples**: listen, read the script, and compare against the reference
+anchor to hear why each take was rejected.
 
 ---
 
@@ -37,8 +21,8 @@ This page walks through **worked examples**: listen, read the script, and see wh
 | out-of-domain test | 1,380 | 712 | 275 | 393 | 3.32 |
 
 In-domain audio is synthesised entirely with **Gemini 2.5 Flash TTS**. The out-of-domain split is held
-out for cross-system generalisation and uses **Gemini 3.1 Flash TTS** and **Cartesia Sonic 3.5** — neither
-appears in training.
+out for cross-system generalisation and uses **Gemini 3.1 Flash TTS** and **Cartesia Sonic 3.5**, neither
+of which appears in training.
 
 ### Features
 
@@ -65,324 +49,430 @@ The guideline itself ships with this dataset, with its own reference audio for e
 
 | | |
 |---|---|
-| [`guidelines/qa-criteria-th.md`](guidelines/qa-criteria-th.md) | the original Thai document the QA team worked from — authoritative |
+| [`guidelines/qa-criteria-th.md`](guidelines/qa-criteria-th.md) | the original Thai document the QA team worked from, authoritative |
 | [`guidelines/qa-criteria-en.md`](guidelines/qa-criteria-en.md) | English translation of that document |
 
 The summary below is a condensed version of those two files.
 
 ### Correctness — pronunciation & text accuracy
 
-**Zero tolerance:** a passing clip reads the script 100% correctly.
-
-1. Repeated words or syllables — *…ตั้งปณิธานแน่วแน่ **แน่***
-2. Skipped syllables or words — *ครั้งแล้ว\_\_ที่ข้าพเจ้า…*
-3. Wrong spelling-to-sound — *เกิน* read as *เกิด*
-4. Wrong tone (วรรณยุกต์) — *แน่วแน่* read as *แนวแน่*
-5. ไม้ยมก (ๆ) must be read as the doubled word exactly once — *อื่นๆ → อื่นอื่น*
+1. Repeated words or syllables, for example *…ตั้งปณิธานแน่วแน่ **แน่***
+2. Skipped syllables or words, for example *ครั้งแล้ว\_\_ที่ข้าพเจ้า…*
+3. Wrong spelling-to-sound, for example *เกิน* read as *เกิด*
+4. Wrong tone (วรรณยุกต์), for example *แน่วแน่* read as *แนวแน่*
+5. ไม้ยมก (ๆ) must be read as the doubled word exactly once, for example *อื่นๆ → อื่นอื่น*
 6. Parenthetical text read once, never duplicated
 
-### Expressiveness — tone, pacing & context
-
-**The production bar allows on average at most one minor flaw per minute.**
+### Expressiveness — prosody, pacing & context
 
 1. Reading speed too fast or too slow, or a stiff/unnatural pace
 2. Inter-segment pause too long or too short
-3. Tone not matching context — บทบรรยาย read with dialogue emotion, or vice versa
+3. Prosody not matching context, for example บทบรรยาย read with dialogue emotion, or vice versa
 4. Flat monotone, or overacting beyond the context
 5. Wrong word emphasis, or robotic/unnatural pitch
 6. Audio cut off before the sentence ends
-7. Unnatural mid-sentence pauses — *ท่านคงไม่ทำเช่นนั้นแน่\_หากท่าน\_ได้พบเขา*
+7. Unnatural mid-sentence pauses, for example *ท่านคงไม่ทำเช่นนั้นแน่\_หากท่าน\_ได้พบเขา*
 
 ---
 
-## ⚠️ Correctness failures
+## Correctness failures
 
-#### `b-764881-version0`
+5 segments from the in-domain test split, labeled correctness fail by the production QA workflow.
+Each ships with the same reference anchor its labeller had access to. See
+[Reference audio](#reference-audio) for what that anchor means.
 
-<audio controls src="examples/correctness_fail/b-764881-version0.flac"></audio>
+#### Example 1
+
+<audio controls src="examples/correctness_fail/b-854660-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/022-classic-the-scarlet-letter-nathaniel-hawthorne_chunk0190_ref.flac"></audio>
 
 | | |
 |---|---|
-| **book** | `018-classic-silas-marner-george-eliot` |
 | **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version0` |
-| **duration** | 8.23 s @ 44100 Hz |
+| **duration** | 3.65 s |
 | **correctness / expressiveness** | `fail` / `pass` |
 
 **Target transcript**
 
-> พวกเขาบอกว่าเป็นความเมตตาแท้ ๆ ที่คอกม้าไม่ถูกไฟไหม้จนย่างสดพวกสัตว์ใบ้ผู้น่าสงสารพวกนั้น
+> สามารถพูดคุยกันได้โดยไม่ต้องเสี่ยงต่อการถูกแอบฟัง
 
-**What an ASR hears** (Whisper, `language=th`)
-
-> พวกเขาบอกว่าเป็นความเมตาแทธ ที่ขออกมาไม่ทุกไฟไหม จนยางสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสสส
-
-The ASR transcription degenerates into a run of repeated characters, which is what a stuck or looping synthesis artefact looks like from the outside.
-
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
-
-#### `b-721118-version0`
-
-<audio controls src="examples/correctness_fail/b-721118-version0.flac"></audio>
-
-| | |
-|---|---|
-| **book** | `book-9e83bfee` |
-| **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version0` |
-| **duration** | 31.51 s @ 44100 Hz |
-| **correctness / expressiveness** | `fail` / `pass` |
-
-**Target transcript**
-
-> ก็ตอบสนองอย่างฉับไวรุนแรงเสียจนในที่สุด เพื่อความโล่งอกอย่างบอกไม่ถูกของกระผม มันก็ได้ปลุกกระผมให้ตื่นขึ้น และสิ่งใดเล่าที่เป็นต้นตอทำให้เกิดเสียงโกลาหลอึกทึกเช่นนั้น สิ่งใดกันที่สวมบทบาทเป็นยาเบซในเหตุการณ์ทะเลาะวิวาทครั้งนี้ เพียงแค่กิ่งของต้นสนฟิร์ที่กระทบกับหน้าต่างบานเกล็ดยามที่ลมพายุพัดหวนคร่ำครวญ และทำให้ลูกสนแห้งๆ ของมันรัวกระทบกับบานกระจก!
-
-**What an ASR hears** (Whisper, `language=th`)
-
-> ก็ตอบสนองอย่าง ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ ๆ
-
-A 31.5 s take whose ASR output collapses into repeated ๆ — the longest segment in this sample set.
-
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
-
-#### `b-721381-version2`
-
-<audio controls src="examples/correctness_fail/b-721381-version2.flac"></audio>
-
-| | |
-|---|---|
-| **book** | `book-9e83bfee` |
-| **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version2` |
-| **duration** | 1.61 s @ 44100 Hz |
-| **correctness / expressiveness** | `fail` / `pass` |
-
-**Target transcript**
-
-> บทที่ 4
-
-**What an ASR hears** (Whisper, `language=th`)
-
-> บอดทิสี
-
-A chapter heading. Numerals are a recurring weak point: the script is *บทที่ 4*.
-
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
-
-#### `b-865574-version0`
-
-<audio controls src="examples/correctness_fail/b-865574-version0.flac"></audio>
-
-| | |
-|---|---|
-| **book** | `059-fairy-tales-grimms-fairy-tales-brothers-grimm` |
-| **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version0` |
-| **duration** | 2.52 s @ 44100 Hz |
-| **correctness / expressiveness** | `fail` / `pass` |
-
-**Target transcript**
-
-> ” ฮันส์ตอบ “ไปหาเกรเทล
-
-**What an ASR hears** (Whisper, `language=th`)
-
-> handstop ไปหา Great Hill
-
-Proper nouns crossing script boundaries (ฮันส์ / เกรเทล) in Grimms' Fairy Tales.
-
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
-
+**Why this failed:** the audio is incomplete. It skips the word **ต้อง** in the transcript.
 
 ---
 
-## ⚠️ Expressiveness failures
+#### Example 2
 
-#### `b-727547-version1`
-
-<audio controls src="examples/expressiveness_fail/b-727547-version1.flac"></audio>
-
-| | |
-|---|---|
-| **book** | `book-9e83bfee` |
-| **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version1` |
-| **duration** | 2.73 s @ 44100 Hz |
-| **correctness / expressiveness** | `pass` / `fail` |
-
-**Target transcript**
-
-> บทที่ 23
-
-Measured at **2.6 characters/second** against a dataset median of 10.5 — the slowest expressiveness failure in the test split.
-
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
-
-#### `b-814590-version0`
-
-<audio controls src="examples/expressiveness_fail/b-814590-version0.flac"></audio>
+<audio controls src="examples/correctness_fail/g-6543-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/the-game-of-life-and-how-to-play_chunk0008_ref.flac"></audio>
 
 | | |
 |---|---|
-| **book** | `022-classic-the-scarlet-letter-nathaniel-hawthorne` |
 | **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version0` |
-| **duration** | 5.75 s @ 44100 Hz |
-| **correctness / expressiveness** | `pass` / `fail` |
+| **duration** | 2.63 s |
+| **correctness / expressiveness** | `fail` / `pass` |
 
 **Target transcript**
 
-> ไม่ต้องการให้กระผมช่วยบำรุงขวัญและพละกำลัง เพื่อให้พร้อมสำหรับการเทศนาเลือกตั้งของท่านหรือขอรับ"
+> เธอเคยครุ่นคิดที่จะซื้อผ้าห่มผืนใหม่
 
-Measured at **16.5 characters/second**, the fastest band in the test split.
-
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
-
-#### `b-809740-version0`
-
-<audio controls src="examples/expressiveness_fail/b-809740-version0.flac"></audio>
-
-| | |
-|---|---|
-| **book** | `022-classic-the-scarlet-letter-nathaniel-hawthorne` |
-| **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version0` |
-| **duration** | 8.52 s @ 44100 Hz |
-| **correctness / expressiveness** | `pass` / `fail` |
-
-**Target transcript**
-
-> ต้องเผชิญกับภาพความผิดบาปและความอัปยศของเพื่อนมนุษย์ก่อนที่สังคมจะเน่าเฟะจนถึงขั้นหัวเราะเยาะ
-
-Contains a **1.3 s** mid-clip pause.
-
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
-
-#### `b-767841-version1`
-
-<audio controls src="examples/expressiveness_fail/b-767841-version1.flac"></audio>
-
-| | |
-|---|---|
-| **book** | `018-classic-silas-marner-george-eliot` |
-| **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version1` |
-| **duration** | 23.24 s @ 44100 Hz |
-| **correctness / expressiveness** | `pass` / `fail` |
-
-**Target transcript**
-
-> หล่อนชะงักไปในทันที เพราะก๊อดฟรีย์กำลังวางหมวกของเขาลงด้วยมืออันสั่นเทา ก่อนจะหันมาหาหล่อนด้วยใบหน้าซีดเผือด 
-และจ้องมองด้วยสายตาว่างเปล่าชอบกล ราวกับเขาเห็นหล่อนก็จริง ทว่าเห็นเป็นเพียงส่วนหนึ่งของภาพที่หล่อนไม่อาจมองเห็นได้
-
-A 23.2 s take containing **five** pauses longer than 0.35 s.
-
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
-
+**Why this failed:** mispronounced tone. **ผ้าห่ม** (low tone) was read as **ผ้าห๊ม** (high tone).
 
 ---
 
-## ✅ Accepted takes
+#### Example 3
 
-For contrast, four segments that passed both dimensions — two in-domain, two out-of-domain.
-
-#### `b-832158-version0`
-
-<audio controls src="examples/pass/b-832158-version0.flac"></audio>
+<audio controls src="examples/correctness_fail/b-730243-version1.flac"></audio>
+Reference: <audio controls src="examples/reference/book-9e83bfee_chunk0644_ref.flac"></audio>
 
 | | |
 |---|---|
-| **book** | `001-mystery-the-adventures-of-sherlock-holmes-arthur-conan-doyle` |
 | **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version0` |
-| **duration** | 4.83 s @ 44100 Hz |
+| **duration** | 13.53 s |
+| **correctness / expressiveness** | `fail` / `pass` |
+
+**Target transcript**
+
+> สิ่งที่สารภาพมาไม่ได้ช่วยบรรเทาความรู้สึกฉันได้หรอก แต่เผื่อมันจะช่วยอธิบายสภาพอารมณ์บางอย่างที่ฉันแสดงออกมาซึ่งไม่สามารถหาคำอธิบายอื่นใดได้
+
+**Why this failed:** the audio skips a word. **คำอธิบายอื่นใดได้** comes out as **คำอธิบายอื่นได้**, missing ใด.
+
+---
+
+#### Example 4
+
+<audio controls src="examples/correctness_fail/g-4441-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/book-03f435a9_chunk0008_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 5.11 s |
+| **correctness / expressiveness** | `fail` / `pass` |
+
+**Target transcript**
+
+> ทว่าบัดนี้ ข้าพเจ้ามองเห็นทรวดทรงและใบหน้าของนางได้อย่างชัดเจน
+
+**Why this failed:** mispronounced the synonym compound **ทรวดทรง**.
+
+---
+
+#### Example 5
+
+<audio controls src="examples/correctness_fail/b-787999-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/059-fairy-tales-grimms-fairy-tales-brothers-grimm_chunk0159_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 3.18 s |
+| **correctness / expressiveness** | `fail` / `pass` |
+
+**Target transcript**
+
+> ความริษยาและความแค้นจึงสุมอก
+
+**Why this failed:** anaptyxis error on **ริษยา**. The correct reading inserts a short vowel (ริด-สะ-ยา), but the take collapses it to ริด-ยา, dropping the epenthetic syllable.
+
+---
+
+## Expressiveness failures
+
+5 segments labeled expressiveness fail. Pronunciation and text are correct, but pacing, pausing, tone,
+or emphasis did not meet the production bar. Compare each clip against its reference anchor to hear the
+difference in delivery.
+
+#### Example 1
+
+<audio controls src="examples/expressiveness_fail/b-335269-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/031-sci-fi-the-time-machine-h-g-wells_chunk0003_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 10.10 s |
+| **correctness / expressiveness** | `pass` / `fail` |
+
+**Target transcript**
+
+> นักเดินทางข้ามเวลา ย้อน "คุณอาจทุ่มเถียงชักแม่น้ำทั้งห้าเพื่อเปลี่ยนสีดำเป็นสีขาวได้" ฟิลบีกล่าว
+
+**Why this failed:** a wrong pause is inserted right at **คุณอาจ**, where the line should read straight through with no break. The whole delivery is also too monotone compared to the reference.
+
+---
+
+#### Example 2
+
+<audio controls src="examples/expressiveness_fail/g-7831-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/sherlock-holmes-a-study-in-scarlet2_chunk0003_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 4.57 s |
+| **correctness / expressiveness** | `pass` / `fail` |
+
+**Target transcript**
+
+> เพียงแค่เล่าให้เราฟังในแบบของคุณตามที่มันเกิดขึ้นก็พอ
+
+**Why this failed:** too many pauses. The take breaks as *เพียงแค่ (pause) เล่าให้เราฟังในแบบของคุณ (pause) ตามที่มันเกิด (pause) ขึ้นก็พอ*. It reads more smoothly with a single pause: *เพียงแค่เล่าให้เราฟังในแบบของคุณ (pause) ตามที่มันเกิดขึ้นก็พอ*.
+
+---
+
+#### Example 3
+
+<audio controls src="examples/expressiveness_fail/b-856253-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/018-classic-silas-marner-george-eliot_chunk0153_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 2.79 s |
+| **correctness / expressiveness** | `pass` / `fail` |
+
+**Target transcript**
+
+> เอปปี้กล่าว หล่อนคอยระแวดระวังอยู่เสมอ
+
+**Why this failed:** too fast compared to the reference audio.
+
+---
+
+#### Example 4
+
+<audio controls src="examples/expressiveness_fail/b-816990-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/022-classic-the-scarlet-letter-nathaniel-hawthorne_chunk0001_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 7.25 s |
+| **correctness / expressiveness** | `pass` / `fail` |
+
+**Target transcript**
+
+> ดูเหมือนว่าข้าพเจ้าจะเจริญรอยตามท่าน "พี. พี. เสมียนประจำเขตวัด
+
+**Why this failed:** the abbreviation **"พี. พี. เสมียนประจำเขตวัด"** is read too slowly and robotically.
+
+---
+
+#### Example 5
+
+<audio controls src="examples/expressiveness_fail/b-832120-version7.flac"></audio>
+Reference: <audio controls src="examples/reference/001-mystery-the-adventures-of-sherlock-holmes-arthur-conan-doyle_chunk0060_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 4.65 s |
+| **correctness / expressiveness** | `pass` / `fail` |
+
+**Target transcript**
+
+> มีข่าวร้ายเมื่อเช้านี้ เลสเตรดตั้งข้อสังเกต
+
+**Why this failed:** too slow compared to the reference audio.
+
+---
+
+## Accepted takes
+
+5 segments that passed both dimensions, drawn from the same in-domain test split as the failures above,
+so you can hear what an acceptable take sounds like on the same books and voices.
+
+#### Example 1
+
+<audio controls src="examples/pass/b-722667-version1.flac"></audio>
+Reference: <audio controls src="examples/reference/book-9e83bfee_chunk0148_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 8.46 s |
 | **correctness / expressiveness** | `pass` / `pass` |
 
 **Target transcript**
 
-> แม็กคาร์ธีผู้พ่อต้องจบชีวิตลงด้วยน้ำมือของแม็กคาร์ธีผู้ลูกน่ะสิ
+> กอดรัดแก้วตาดวงใจไว้แนบ-อก ฮินด์ลี่เดินลงบันไดมาอย่างเชื่องช้า ส่างเมาและรู้สึกละอายแก่ใจ
 
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
+---
 
-#### `b-720989-version0`
+#### Example 2
 
-<audio controls src="examples/pass/b-720989-version0.flac"></audio>
+<audio controls src="examples/pass/g-5673-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/the-wonderful-wizard-of-oz_chunk0003_ref.flac"></audio>
 
 | | |
 |---|---|
-| **book** | `book-9e83bfee` |
 | **TTS system** | `gemini-2.5-flash-tts` |
-| **take** | `version0` |
-| **duration** | 6.27 s @ 44100 Hz |
+| **duration** | 5.61 s |
 | **correctness / expressiveness** | `pass` / `pass` |
 
 **Target transcript**
 
-> แต่เดี๋ยวนี้แค่หลุดเสียงหัวเราะคิกคักนิดเดียวก็พอแล้วที่จะถูกไล่ตะเพิดไปเข้ามุม
+> ทว่าแรงดันมหาศาลของกระแสลมที่โหมกระหน่ำอยู่ทุกด้านของตัวบ้าน
 
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
+---
 
-#### `o-848451-version1`
+#### Example 3
 
-<audio controls src="examples/pass/o-848451-version1.flac"></audio>
+<audio controls src="examples/pass/b-859434-version5.flac"></audio>
+Reference: <audio controls src="examples/reference/001-mystery-the-adventures-of-sherlock-holmes-arthur-conan-doyle_chunk0129_ref.flac"></audio>
 
 | | |
 |---|---|
-| **book** | `018-classic-silas-marner-george-eliot` |
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 3.32 s |
+| **correctness / expressiveness** | `pass` / `pass` |
+
+**Target transcript**
+
+> ที่โรงเตี๊ยมเดอะคราวได้อย่างไม่มีปัญหาใด
+
+---
+
+#### Example 4
+
+<audio controls src="examples/pass/g-2714-version0.flac"></audio>
+Reference: <audio controls src="examples/reference/book-2b8009de_chunk0004_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 3.59 s |
+| **correctness / expressiveness** | `pass` / `pass` |
+
+**Target transcript**
+
+> ซ้ำยังเป็นนักเคมีชั้นเลิศ แต่เท่าที่ผมรู้
+
+---
+
+#### Example 5
+
+<audio controls src="examples/pass/b-783874-version1.flac"></audio>
+Reference: <audio controls src="examples/reference/059-fairy-tales-grimms-fairy-tales-brothers-grimm_chunk0060_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-2.5-flash-tts` |
+| **duration** | 4.31 s |
+| **correctness / expressiveness** | `pass` / `pass` |
+
+**Target transcript**
+
+> และเมื่อพวกเขาสืบเท้าเข้าไปใกล้บ้านหลังน้อย
+
+---
+
+## Out-of-domain examples
+
+5 segments from the out-of-domain test split, synthesized with TTS systems never seen during
+training (`cartesia/sonic` and `gemini-3.1-flash-tts-preview`), mixing pass and fail across both dimensions
+and both systems. Each reference clip here is same-system (built from accepted takes of the same
+TTS system as the sample), which our own experiments show matters: swapping in a cross-model reference
+measurably hurts both correctness and expressiveness agreement.
+
+#### Example 1
+
+<audio controls src="examples/out_of_domain/o-861637-version9.flac"></audio>
+Reference (same TTS system): <audio controls src="examples/reference/001-mystery-the-adventures-of-sherlock-holmes-arthur-conan-doyle_chunk0140_cartesia-sonic_ref.flac"></audio>
+
+| | |
+|---|---|
 | **TTS system** | `cartesia/sonic` |
-| **take** | `version1` |
-| **duration** | 4.48 s @ 44100 Hz |
+| **duration** | 2.31 s |
 | **correctness / expressiveness** | `pass` / `pass` |
 
 **Target transcript**
 
-> แหม ก็ต้องเป็นหนูสิคะพ่อ” เอปปี้ตอบกลั้วเสียงหัวเราะ
+> และห้ามหลุดปากแก่ผู้ใดเด็ดขาด
 
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
+---
 
-#### `o-729203-version1`
+#### Example 2
 
-<audio controls src="examples/pass/o-729203-version1.flac"></audio>
+<audio controls src="examples/out_of_domain/o-811535-version3.flac"></audio>
+Reference (same TTS system): <audio controls src="examples/reference/022-classic-the-scarlet-letter-nathaniel-hawthorne_chunk0099_gemini-3.1-flash-tts-preview_ref.flac"></audio>
 
 | | |
 |---|---|
-| **book** | `book-9e83bfee` |
-| **TTS system** | `cartesia/sonic` |
-| **take** | `version1` |
-| **duration** | 5.46 s @ 44100 Hz |
+| **TTS system** | `gemini-3.1-flash-tts-preview` |
+| **duration** | 9.13 s |
 | **correctness / expressiveness** | `pass` / `pass` |
 
 **Target transcript**
 
-> และมีอยู่จริงท่ามกลางพวกเรา! วันที่หล่อนถูกฝัง หิมะตกลงมา
+> โรเจอร์ ชิลลิงเวิร์ธ จึงถือเป็นบุคลากรอันล้ำค่าที่ได้มาในเวลาไม่นาน เขาก็แสดงให้เห็นถึงความเชี่ยวชาญ
 
-> [!NOTE]
-> **Why this was rejected:** _<!-- TODO: annotator explanation -->_
+---
 
+#### Example 3
+
+<audio controls src="examples/out_of_domain/o-788413-version1.flac"></audio>
+Reference (same TTS system): <audio controls src="examples/reference/059-fairy-tales-grimms-fairy-tales-brothers-grimm_chunk0168_cartesia-sonic_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `cartesia/sonic` |
+| **duration** | 4.08 s |
+| **correctness / expressiveness** | `fail` / `pass` |
+
+**Target transcript**
+
+> ข้าจะกลับไปที่บ้านของพ่อไม่ได้อีกแล้ว" พระองค์ตรัส
+
+**Why this failed:** mispronounced with a final consonant aspiration, an added trailing "ti" sound that does not exist for this word in Thai.
+
+---
+
+#### Example 4
+
+<audio controls src="examples/out_of_domain/o-806788-version1.flac"></audio>
+Reference (same TTS system): <audio controls src="examples/reference/051-children-alices-adventures-in-wonderland-lewis-carroll_chunk0051_gemini-3.1-flash-tts-preview_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `gemini-3.1-flash-tts-preview` |
+| **duration** | 4.14 s |
+| **correctness / expressiveness** | `pass` / `fail` |
+
+**Target transcript**
+
+> ไม่ สำคัญพ่ะย่ะค่ะ ฝ่าบาททรงหมายถึงอย่างนั้นแน่นอน
+
+**Why this failed:** too fast compared to the reference audio.
+
+---
+
+#### Example 5
+
+<audio controls src="examples/out_of_domain/o-764759-version11.flac"></audio>
+Reference (same TTS system): <audio controls src="examples/reference/018-classic-silas-marner-george-eliot_chunk0042_cartesia-sonic_ref.flac"></audio>
+
+| | |
+|---|---|
+| **TTS system** | `cartesia/sonic` |
+| **duration** | 5.66 s |
+| **correctness / expressiveness** | `pass` / `fail` |
+
+**Target transcript**
+
+> "เปล๊า----" ช่างเกือกม้าประชดประชันอย่างขมขื่น พลางกวาดตามองคนทั้งวง
+
+**Why this failed:** too monotone on **"เปล๊า----"**, which is dialogue and needs emotional delivery.
 
 ---
 
 ## Reference audio
 
-Every segment ships with a reference anchor: up to 60 s of **accepted** takes from the same chunk —
+Every segment ships with a reference anchor: up to 60 s of accepted takes from the same chunk,
 same book, same voice, same recording session. It is not a recording of the same words. It gives an
-evaluator a "what correct sounds like here" baseline, and in our experiments it turns out to be load-bearing
-for correctness rather than for expressiveness.
-
-<audio controls src="examples/reference/chunk_0046_ref.flac"></audio>
-
-_Reference anchor for `b-764881-version0` (Silas Marner)._
+evaluator a baseline for what correct sounds like in that context, and in our experiments it turns out
+to be load-bearing for correctness rather than for expressiveness. Each example above embeds its own
+reference clip inline, directly under the sample being evaluated.
 
 ---
 
