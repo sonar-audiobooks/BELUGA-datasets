@@ -474,21 +474,3 @@ evaluator a baseline for what correct sounds like in that context, and in our ex
 to be load-bearing for correctness rather than for expressiveness. Each example above embeds its own
 reference clip inline, directly under the sample being evaluated.
 
----
-
-## Loading
-
-```python
-from datasets import load_dataset
-
-ds = load_dataset("sonar-audiobooks/BELUGA")
-print(ds["test"][0]["transcript_text"])
-```
-
----
-
-## Reference
-
-```bibtex
-<!-- TODO: citation -->
-```
